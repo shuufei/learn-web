@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FID Test</title>
+  <script>
+    // メインプロセスを一定期間占有することで、FIDの数値が悪くなる
+    const list = new Array(10000000).fill(1).map(v => v * 2);
+    console.log('list: ', list);
+  </script>
+</head>
+<body>
+  <input type="text" name="name" id="name-input">
+
+  <button id="button">button</button>
+
+  <script type="module">
+    import {getCLS, getFID, getLCP} from 'https://unpkg.com/web-vitals?module';
+
+    getFID(console.log);
+  </script>
+
+  <script>
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const delay = entry.processingStart - entry.startTime;
+        console.log('FID candidate: ', delay, entry);
+      }
+    });
+    observer.observe({type: 'first-input', buffered: true});
+  </script>
+</body>
+</html>
