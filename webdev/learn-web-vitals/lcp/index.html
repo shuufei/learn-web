@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LCP Test</title>
+</head>
+<body>
+  <!-- キャッシュ無効化してしてページを読み込むとこの画像の読み込みに7secぐらいかかる。そのためLCPの結果が悪くなる。 -->
+  <img src="https://web-dev.imgix.net/image/tcFciHGuF3MxnTr1y5ue01OGLBn2/elqsdYqQEefWJbUM2qMO.svg" alt="">
+
+  <!-- 大きい要素の方がlastEntryで取得される。サイズというよりは表示される要素の大きさ？ -->
+  <p id="large-paragraph">This is large body of text.</p>
+  <p id="small-paragraph" style="height: 200px">This is small body...</p>
+
+  <script type="module">
+    import {getCLS, getFID, getLCP} from 'https://unpkg.com/web-vitals?module';
+
+    getLCP(console.log);
+  </script>
+
+  <script>
+    const observer = new PerformanceObserver((list) => {
+      let perfEntries = list.getEntries();
+      let lastEntry = perfEntries[perfEntries.length - 1];
+      // Process the latest candidate for largest contentful paint
+      console.log('---last entry: ', lastEntry, perfEntries)
+    });
+    observer.observe({entryTypes: ['largest-contentful-paint']});
+  </script>
+</body>
+</html>
